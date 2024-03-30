@@ -1,4 +1,4 @@
-import react, { useState } from 'react'
+import react, { useState, useContext } from 'react'
 
 import { 
   View, 
@@ -6,19 +6,24 @@ import {
   StyleSheet,
   Image,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
+  ActivityIndicator
 } from 'react-native'
 
+import { AuthContext } from '../../contexts/AuthContext'
+
 export default function SignIn() {
+  const { signIn, loadingAuth } = useContext(AuthContext)
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  function handleLogin() {
+  async function handleLogin() {
     if (email === '' || password === '') {
       return
     }
 
-    alert('email:' + email)
+    await signIn({ email, password })
   }
 
   return (
@@ -47,9 +52,11 @@ export default function SignIn() {
         />
 
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>
-            Acessar
-          </Text>
+          {loadingAuth ? (
+            <ActivityIndicator size={25} color="#fff"/>
+          ): (
+            <Text style={styles.buttonText}>Acessar</Text>
+          )}
         </TouchableOpacity>
 
       </View>
@@ -67,7 +74,7 @@ const styles = StyleSheet.create({
   },
 
   logo: {
-    marginBottom: 18,
+    marginBottom: 28,
   },
 
   inputContainer: {
@@ -89,6 +96,7 @@ const styles = StyleSheet.create({
   },
 
   button: {
+    marginTop: 15,
     width: '95%',
     height: 40,
     backgroundColor: '#3fffa3',
